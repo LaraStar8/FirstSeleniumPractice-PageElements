@@ -121,7 +121,6 @@ public class FirstSeleniumTest {
         assertEquals(firstName, expectedResult);
     }
 
-    //
     @ParameterizedTest
     @DisplayName("FirstName Empty")
     @ValueSource(strings = {"", "   "})
@@ -298,5 +297,64 @@ public class FirstSeleniumTest {
         WebElement genderBoxElement = driver.findElement(By.xpath("//input[@name='custom_gender']"));
         assertNotNull(genderBoxElement);
     }
-}
+
+    @Test
+    public void genderTest() throws InterruptedException {
+        String femaleXpath = "//*[@name='sex' and @value=1]";
+        String maleXpath = "//*[@name='sex' and @value=2]";
+
+        driver.findElement(By.xpath("//a[text()='Create new account']")).click();
+        Thread.sleep(1000);
+        WebElement signUpButton = driver.findElement(By.xpath("//button[@name='websubmit']"));
+        assertNotNull(signUpButton);
+        //       Verify female gender is checked
+        WebElement femaleButton = driver.findElement(By.xpath(femaleXpath));
+        femaleButton.click();
+        String isFemaleChecked = driver.findElement(By.xpath(femaleXpath)).getAttribute("checked");
+        assertNotNull(isFemaleChecked);
+        assertEquals("true", isFemaleChecked);
+//        Verify male gender is checked
+        WebElement maleButton = driver.findElement(By.xpath(maleXpath));
+        maleButton.click();
+        String isMaleChecked = driver.findElement(By.xpath(maleXpath)).getAttribute("checked");
+        assertNotNull(isMaleChecked);
+        assertEquals("true", isMaleChecked);
+    }
+
+    @Test
+    public void errorMessageTest() throws InterruptedException {
+        driver.findElement(By.xpath("//a[text()='Create new account']")).click();
+        Thread.sleep(1000);
+        WebElement signUpButton = driver.findElement(By.xpath("//button[@name='websubmit']"));
+        assertNotNull(signUpButton);
+        signUpButton.click();
+        driver.findElement(By.xpath("//*[@aria-label='Mobile number or email']")).click();
+        WebElement error = driver.findElement(By.xpath("//*[contains(text(),'to reset')]"));
+        assertNotNull(error);
+    }
+
+    @Test
+    public void yearTest() throws InterruptedException {
+        driver.findElement(By.xpath("//a[text()='Create new account']")).click();
+        Thread.sleep(1000);
+        WebElement signUpButton = driver.findElement(By.xpath("//button[@name='websubmit']"));
+        assertNotNull(signUpButton);
+        driver.findElement(By.xpath("//*[@id='year']")).click();
+        driver.findElement(By.xpath("//*[text()='1990']")).click();
+        String yearValue = driver.findElement(By.xpath("//*[@id='year']")).getAttribute("value");
+        assertEquals("1990", yearValue);
+    }
+    @ParameterizedTest
+    @ValueSource(strings = {"1905","1950","2023"})
+    public void yearTestParameterized(String yearInput) throws InterruptedException {
+        driver.findElement(By.xpath("//a[text()='Create new account']")).click();
+        Thread.sleep(1000);
+        WebElement signUpButton = driver.findElement(By.xpath("//button[@name='websubmit']"));
+        assertNotNull(signUpButton);
+        driver.findElement(By.xpath("//*[@id='year']")).click();
+        driver.findElement(By.xpath("//*[text()='"+yearInput+"']")).click();
+        String yearValue = driver.findElement(By.xpath("//*[@id='year']")).getAttribute("value");
+        assertEquals(yearInput, yearValue);
+    }
+    }
 
